@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>JS - Array</title>
+		<style>
+			#game { border-collapse: collapse; margin: 50px auto;}
+			#game td { width: 100px; height: 100px; border: 1px solid gray; 
+				text-align: center; font: 2em Arial; color: #333;}
+		</style>
+	</head>
+	<body>
+		<table id="game"></table>
+
+		<script>
+			let game = document.getElementById("game");
+			let a = [""];
+			let n = 4;
+			let matrix = [];
+			let bos = [];
+			
+			
+			for(let i = 1; i <= 15; i++) a.push(i);
+			
+			for(let i = 0; i < n; i++){
+				matrix[i] = [];
+				for(let j = 0; j < n; j++){
+					let k = rand(0, a.length-1);
+					if(a[k] == "") {
+						bos[0] = i;
+						bos[1] = j;
+					}
+					matrix[i][j] = a[k];
+					a.splice(k, 1);
+				}
+			}
+			createTable();
+
+			function createTable() {			
+				let kod = "";
+				for(let i = 0; i < n; i++){
+					kod += '<tr>';
+					for(let j = 0; j < n; j++){
+						kod += '<td onclick="bas('+i+','+j+')">';
+						kod += matrix[i][j];
+						kod += '</td>';
+					}
+					kod += '</tr>';
+				}
+				game.innerHTML = kod;
+			}
+			
+			function bas(i, j) {
+				if(i == bos[0] && Math.abs(j - bos[1]) == 1 ||
+					Math.abs(i - bos[0]) == 1 && j == bos[1] ) {
+					matrix[bos[0]][bos[1]] = matrix[i][j];
+					matrix[i][j] = "";
+					bos[0] = i;
+					bos[1] = j;
+				}
+				createTable();
+				check();
+			}
+			
+			function check() {
+			
+			}
+			
+			function rand(min, max) {
+				return Math.floor(Math.random() * (max - min + 1) ) + min;
+			}
+
+		</script>
+		
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

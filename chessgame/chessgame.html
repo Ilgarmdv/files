@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/ebf77f4b22.js" crossorigin="anonymous"></script>
+    <style>
+        .orange{
+            background-color: orange;
+            width:60px;
+            height:60px;
+            
+        }
+        .yellow{
+            background-color: yellow;
+            width:60px;
+            height:60px;
+            
+        }
+        #board{
+            width:480px;
+            height:480px;
+        }
+        i{
+            font-size: 200%;
+            margin-left:15px;
+        }
+        #alerts{
+            width:300px;
+            height:300px;
+            background-color: red;
+            color: white;
+            display: none;
+            
+            align-items: center;
+            justify-content: center;
+        }
+        body{
+            display:flex;
+            justify-content: space-between;
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Start with black</h1>
+        <table id = "board">
+   
+        </table>
+    </div>
+    <div id="alerts"></div>
+    <script>
+        var chosenarr = [];
+        let currentid;
+        let posblackking = "04";
+        let posgreenking = "74";
+        
+        let order = "black";
+
+        main();
+
+        function main(){
+            createboard();
+            placefigures();
+            addfunc();
+            
+        }
+        
+
+
+        function ordermove(clr){
+            if(order == clr){
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        function addfunc(){
+            for(let i = 0; i < 8; i++){
+                for(let j = 0; j < 8; j++){
+                    document.getElementById(i.toString()+j.toString()).addEventListener("click", function(){ifclick(i,j)});
+                }
+            }
+        }
+        
+        function ifclick(i,j){
+            let clr;
+            clr = document.getElementById(i.toString()+j.toString()).style.color;
+            let l = chosenarr.length;
+            if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                if(ordermove(clr) == true){
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    rock(i.toString()+j.toString());
+                }   
+                    
+            }else if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                if(ordermove(clr) == true){
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    knight(i.toString()+j.toString()), 2000;
+
+                }
+            } else if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                if(ordermove(clr) == true){    
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    bishop(i.toString()+j.toString());
+                }
+                    
+            } else if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                if(ordermove(clr) == true){       
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    queen(i.toString()+j.toString());
+                }
+                    
+            }else if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-king" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                    //changeplace(currentid);
+                if(ordermove(clr) == true){   
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    king(i.toString()+j.toString());
+                }
+                    
+            }else if(document.getElementById(i.toString()+j.toString()).innerHTML == '<i class="fas fa-chess-pawn" aria-hidden="true"></i>' && document.getElementById(i.toString()+j.toString()).style.backgroundColor != "red"){
+                    //changeplace(currentid);
+                if(ordermove(clr) == true){   
+                    for(let i = 0; i < l; i++){
+                        determinecolor(chosenarr[i]);
+                    }
+                    chosenarr = []; 
+                    pawn(i.toString()+j.toString());
+                }
+            }else if(document.getElementById(i.toString()+j.toString()).style.backgroundColor == "red"){
+                    changeplace(i.toString()+j.toString()); 
+            }
+                
+            
+        }
+        
+
+        
+
+        function determinecolor(x){
+            let i = Number(x[0]);
+            let j = Number(x[1]);
+            if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)){
+                document.getElementById(x).style.backgroundColor = "yellow";
+
+            }
+            else if((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)){
+                document.getElementById(x).style.backgroundColor = "orange";
+
+            }
+            document.getElementById(x).style.border = "none";
+        }
+
+    
+
+        
+      
+
+        function changeplace(x){
+            let clr = document.getElementById(currentid).style.color;
+            if(document.getElementById(currentid).innerHTML == '<i class="fas fa-chess-king" aria-hidden="true"></i>'){
+                if(document.getElementById(currentid).style.color == "black"){
+                    posblackking = x;
+                }else if(document.getElementById(currentid).style.color == "green"){
+                    posgreenking = x;
+                }
+            }
+            
+            document.getElementById(x).innerHTML = document.getElementById(currentid).innerHTML;
+            document.getElementById(x).style.color = document.getElementById(currentid).style.color;
+            document.getElementById(currentid).style.color = "white";
+            document.getElementById(currentid).innerHTML = "";
+            l = chosenarr.length;
+            for(let i = 0; i < l; i++){
+                determinecolor(chosenarr[i]);
+            }
+            chosenarr = [];            
+            if(order == "black"){
+                order = "green";
+            }else{
+                order = "black";
+            }
+            if(clr == "black"){
+                if(letmoveking(Number(posgreenking[0]), Number(posgreenking[1]), "green") == false){
+                    document.getElementById("alerts").innerHTML = "Check";
+                    document.getElementById("alerts").style.fontSize = "300%";
+                    document.getElementById("alerts").style.display = "block";
+                }else{
+                    document.getElementById("alerts").style.display = "none";
+                }
+            }else{
+                if(letmoveking(Number(posblackking[0]), Number(posblackking[1]), "black") == false){
+                    document.getElementById("alerts").innerHTML = "Check";
+                    document.getElementById("alerts").style.fontSize = "300%";
+                    document.getElementById("alerts").style.display = "block";
+                }else{
+                    document.getElementById("alerts").style.display = "none";
+
+                }
+            }
+            
+        }
+
+
+        function iffree(x,y, clr){
+            
+            if((document.getElementById(x.toString()+y.toString()).innerHTML == "") || (document.getElementById(x.toString()+y.toString()).innerHTML != "" && document.getElementById(x.toString()+y.toString()).style.color != clr)){
+                document.getElementById(x.toString()+y.toString()).style.backgroundColor = "red"; 
+                document.getElementById(x.toString()+y.toString()).style.border = "black 2px solid";
+                chosenarr.push(x.toString()+y.toString());
+            }
+        }
+
+        function iffreepawn(x,y, clr){
+            
+            if((document.getElementById(x.toString()+y.toString()).innerHTML == "")){
+                document.getElementById(x.toString()+y.toString()).style.backgroundColor = "red"; 
+                document.getElementById(x.toString()+y.toString()).style.border = "black 2px solid";
+                chosenarr.push(x.toString()+y.toString());
+            }
+        }
+        function ifopponentpawn(x,y, clr){
+            
+            if((document.getElementById(x.toString()+y.toString()).innerHTML != "" && document.getElementById(x.toString()+y.toString()).style.color != clr)){
+                document.getElementById(x.toString()+y.toString()).style.backgroundColor = "red"; 
+                document.getElementById(x.toString()+y.toString()).style.border = "black 2px solid";
+                chosenarr.push(x.toString()+y.toString());
+            }
+        }
+        
+
+
+        //determining the directions of pawn
+        function pawn(x){                
+                currentid = x;
+                let r = Number(x[0]);
+                let c = Number(x[1]);
+                let clr = document.getElementById(x).style.color;
+                let updown = true, downright = true, downleft = true, upright = true, upleft = true;
+                let posx;
+                let posy;
+                if(clr == "black"){
+                    posx = Number(posblackking[0]);
+                    posy = Number(posblackking[1]);
+                    
+                }else{
+                    posx = Number(posgreenking[0]);
+                    posy = Number(posgreenking[1]);
+                }
+    
+                if(r - posx == c - posy && r > posx && c > posy){
+                    let j = posy + 1;
+                    for(let i = posx+1; i < 8; i++){
+                        if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                upright = false;
+                                downleft = false;
+                                updown = false;
+                            }
+                            break;
+                        }
+                        j++;
+                        if(j == 8){
+                            break;
+                        }
+                    }
+                }
+                if(r - posx == posy - c && r > posx && c < posy){
+                    
+                    let j = posy - 1;
+                    for(let i = posx+1; i < 8; i++){
+                        if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                upleft = false;
+                                downright = false;
+                                updown = false;
+                                
+                            }
+                            break;
+                        }
+                        j--;
+                        if(j == -1){
+                            break;
+                        }
+                    }
+                }
+    
+                if(r - posx == posy - c && r < posx && c > posy){
+
+                    let j = posy + 1;
+                    for(let i = posx-1; i >= 0; i--){
+                        if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                upleft = false;
+                                downright = false;
+                                updown = false;
+                            }
+                            break;
+                        }
+                        j++;
+                        if(j == 8){
+                            break;
+                        }
+                    }
+                }
+                if(r - posx == c - posy && r < posx && c < posy){
+
+                    let j = posy - 1;
+                    for(let i = posx-1; i >= 0; i--){
+                        if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                updown = false;
+                                downright = true;
+                                upleft = true;
+                                
+                            }
+                            break;
+                        }
+                        j--;
+                        if(j == -1){
+                            break;
+                        }
+                    }
+                }
+    
+                if(r == posx && c > posy){
+                    for(let i = posy+1; i < 8; i++){
+                        if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                updown = false;
+                                downleft = downright = upleft = upright = false;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if(c == posy && r > posx){
+                    for(let i = posx+1; i < 8; i++){
+                        if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                downleft = downright = upleft = upright = false;
+                            }
+                            break;
+                        }
+                    }
+                }
+    
+                if(r == posx && c < posy){
+                    for(let i = posy-1; i >= 0; i--){
+                        if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                updown = false;
+                                downleft = downright = upleft = upright = false;
+
+                            }
+                            break;
+                        }
+                    }
+                }
+                if(c == posy && r < posx){
+                    for(let i = posx-1; i >= 0; i--){
+                        if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-pawn" aria-hidden="true"></i>'){
+                            if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                                downleft = downright = upleft = upright = false;
+
+                            }
+                            break;
+                        }
+                    }
+                }
+    
+    
+    
+    
+    
+    
+    
+    
+                if(updown == true){
+                    if(r != 1 && document.getElementById(x).style.color == "black"){
+                        if(r != 7){
+                            iffreepawn((r+1).toString(), c.toString(), clr);
+                        }
+                    }
+                    if(r == 1 && document.getElementById(x).style.color == "black"){
+                        iffreepawn((r+1).toString(), c.toString(),clr);
+                        if(document.getElementById((r+1).toString()+c.toString()).innerHTML == ""){
+                            iffreepawn((r+2).toString(), c.toString(),clr);
+                        }
+
+                    }
+                
+                    if(r != 6 && document.getElementById(x).style.color == "green"){
+                        if(r != 0){
+                            iffreepawn((r-1).toString(), c.toString(), clr);
+                        }
+                    }
+                    if(r == 6 && document.getElementById(x).style.color == "green"){
+                        iffreepawn((r-1).toString(), c.toString(),clr);
+                        if(document.getElementById((r-1).toString()+c.toString()).innerHTML == ""){
+                            iffreepawn((r-2).toString(), c.toString(),clr);
+                        }
+                    } 
+                }
+                if(downright == true){
+                    if(r != 7 && c != 7 && clr == "black"){
+                        ifopponentpawn((r+1).toString(), (c+1).toString(), clr);
+                        
+                    }
+                }
+                if(downleft == true){
+                    if(r != 7 && c != 0 && clr == "black"){
+                        ifopponentpawn((r+1).toString(), (c-1).toString(), clr);
+                    }
+                }
+                if(upright == true){
+                    if(r != 0 && c != 7 && clr == "green"){
+                        ifopponentpawn((r-1).toString(), (c+1).toString(), clr);
+                    }
+                }
+                if(upleft == true){
+                    if(r != 0 && c != 0 && clr == "green"){
+                        ifopponentpawn((r-1).toString(), (c-1).toString(), clr);
+                    }
+                }
+                
+
+        }
+
+
+        function letmoveking(i,j,clr){
+            let move = true;
+            if(clr == "green"){
+                if((document.getElementById((i-1).toString() + (j-1).toString()).innerHTML == '<i class="fas fa-chess-pawn" aria-hidden="true"></i>' && document.getElementById((i-1).toString() + (j-1).toString()).style.color == "black") || (document.getElementById((i-1).toString() + (j+1).toString()).innerHTML == '<i class="fas fa-chess-pawn" aria-hidden="true"></i>' && document.getElementById((i-1).toString() + (j+1).toString()).style.color == "black") ){
+                    move = false;
+                }
+            }else{
+                if((document.getElementById((i+1).toString() + (j-1).toString()).innerHTML == '<i class="fas fa-chess-pawn" aria-hidden="true"></i>' && document.getElementById((i+1).toString() + (j-1).toString()).style.color == "green") || (document.getElementById((i+1).toString() + (j+1).toString()).innerHTML == '<i class="fas fa-chess-pawn" aria-hidden="true"></i>' && document.getElementById((i+1).toString() + (j+1).toString()).style.color == "green") ){
+                    move = false;
+                }
+            }
+
+
+            if(i >= 1){
+                for(let k = i-1; k >= 0; k--){
+                    if(document.getElementById(k.toString() + j.toString()).style.color == clr){
+                        break;
+                    }else{
+                        if(document.getElementById(k.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>' && 
+                            document.getElementById(k.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + j.toString()).innerHTML != ''){
+                            break;
+                        }else if(document.getElementById(k.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || 
+                            document.getElementById(k.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                                move = false;
+                                break;
+                        }
+                    }
+                }
+            }
+            if(i <= 6){
+                for(let k = i+1; k <= 7; k++){
+                    if(document.getElementById(k.toString() + j.toString()).style.color == clr){
+                        break;
+                    }else{
+                        if(document.getElementById(k.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>' && 
+                        document.getElementById(k.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + j.toString()).innerHTML != ''){
+                            break;
+                        }else if(document.getElementById(k.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || 
+                        document.getElementById(k.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                            move = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(j <= 6){
+                for(let k = j+1; k <= 7; k++){
+                    if(document.getElementById(i.toString() + k.toString()).style.color == clr){
+                        break;
+                    }else{
+                        if(document.getElementById(i.toString() + k.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>' && 
+                        document.getElementById(i.toString() + k.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(i.toString() + k.toString()).innerHTML != ''){
+                            break;
+                        }else if(document.getElementById(i.toString() + k.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || 
+                        document.getElementById(i.toString() + k.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                            move = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(j >= 1){
+                for(let k = j-1; k >= 0; k--){
+                    if(document.getElementById(i.toString() + k.toString()).style.color == clr){
+                        break;
+                    }else{
+                        if(document.getElementById(i.toString() + k.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>' && 
+                        document.getElementById(i.toString() + k.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(i.toString() + k.toString()).innerHTML != ''){
+                            break;
+                        }else if(document.getElementById(i.toString() + k.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || 
+                        document.getElementById(i.toString() + k.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                            move = false;
+                            break;
+                        }
+                    }
+                }
+            }
+                if(i >= 1 && j >= 1){
+                    let copy = j-1;
+                    for(let k = i-1; k >= 0; k--){
+                        if(document.getElementById(k.toString() + copy.toString()).style.color == clr){
+                            break;
+                        }else{
+                            if(document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' && 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + copy.toString()).innerHTML != ''){
+                                break;
+                            }else if(document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                                move = false;
+                                break;
+                            }
+                        }
+                        copy--;
+                        if(copy == -1){
+                            break;
+                        }
+                    }
+                }
+                if(i >= 1 && j <= 6){
+                    copy = j+1;
+                    for(let k = i-1; k >= 0; k--){
+                        if(document.getElementById(k.toString() + copy.toString()).style.color == clr){
+                            break;
+                        }else{
+                            if(document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' && 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + copy.toString()).innerHTML != ''){
+                                break;
+                            }else if(document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                                move = false;
+                                break;
+                            }
+                        }
+                        copy++;
+                        if(copy == 8){
+                            break;
+                        }
+                    }
+                }
+                if(i <=6  && j <= 6){
+                    copy = j+1;
+                    for(let k = i+1; k <= 7; k++){
+                        if(document.getElementById(k.toString() + copy.toString()).style.color == clr){
+                            break;
+                        }else{
+                            if(document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' && 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + copy.toString()).innerHTML != ''){
+                                break;
+                            }else if(document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                                move = false;
+                                break;
+                            }
+                        }
+                        copy++;
+                        if(copy == 8){
+                            break;
+                        }
+                    }
+                }
+                if(i <= 6 && j >= 1){
+                    copy = j-1;
+                    for(let k = i+1; k <= 7; k++){
+                        if(document.getElementById(k.toString() + copy.toString()).style.color == clr){
+                            break;
+                        }else{
+                            if(document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' && 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>' && document.getElementById(k.toString() + copy.toString()).innerHTML != ''){
+                                break;
+                            }else if(document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || 
+                            document.getElementById(k.toString() + copy.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                                move = false;
+                                break;
+                            }
+                        }
+                        copy--;
+                        if(copy == -1){
+                            break;
+                        }
+                    }
+                }
+
+
+                if(i >= 1){
+                    if(j >= 2){
+                        if(document.getElementById((i-1).toString() + (j-2).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i-1).toString() + (j-2).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                    if(j <= 5){
+                        if(document.getElementById((i-1).toString() + (j+2).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                        document.getElementById((i-1).toString() + (j+2).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                }
+                if (i >= 2){
+                    if(j >= 1){
+                        if(document.getElementById((i-2).toString() + (j-1).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i-2).toString() + (j-1).toString()).style.color != clr){
+                            move = false;
+                        }
+                    }
+                    if(j <= 5){
+                        if(document.getElementById((i-2).toString() + (j+1).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i-2).toString() + (j+1).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                }
+                if(i <= 5){
+                    if(j >= 1){
+                        if(document.getElementById((i+2).toString() + (j-1).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i+2).toString() + (j-1).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                    if(j <= 6){
+                        if(document.getElementById((i+2).toString() + (j+1).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i+2).toString() + (j+1).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                }
+                if(i <= 6){
+                    if(j >=2){
+                        if(document.getElementById((i+1).toString() + (j-2).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i+1).toString() + (j-2).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                    if(j <= 5){
+                        if(document.getElementById((i+1).toString() + (j+2).toString()).innerHTML == '<i class="fas fa-chess-knight" aria-hidden="true"></i>' && 
+                            document.getElementById((i+1).toString() + (j+2).toString()).style.color != clr){
+                                move = false;
+                        }
+                    }
+                }
+
+
+
+            
+            
+            return move;
+
+        }
+
+        //determining the directions of king
+        function king(x){
+                currentid = x;
+                let r = Number(x[0]);
+                let c = Number(x[1]);
+                let clr = document.getElementById(x).style.color;
+                let text = '<i class="fas fa-chess-king" aria-hidden="true"></i>';
+                
+                                   
+                if(r >= 1){
+                    if((r >=2 && document.getElementById((r-2).toString() + c.toString()).innerHTML != text) || (r == 1)){
+                        if(letmoveking((r-1), c, clr) == true){
+                            iffree((r-1).toString(), c.toString(), clr);
+                            
+                        }
+                    }
+                }
+
+                if(r <= 6){
+                    if((r <= 5 && document.getElementById((r+2).toString() + c.toString()).innerHTML != text) || (r == 6)){
+                        if(letmoveking((r+1), c, clr) == true){
+                            iffree((r+1).toString(), c.toString(), clr);
+
+                        }
+                    }    
+                }   
+                if(c >= 1){
+                    if((c >= 2 && document.getElementById((r).toString() + (c-2).toString()).innerHTML != text) || (c == 1)){
+                        if(letmoveking((r), (c-1), clr) == true){
+                            iffree((r).toString(), (c-1).toString(), clr);
+                        }
+                        
+                    }
+                }
+                if(c <= 6){
+                    if((c <= 5 && document.getElementById((r).toString() + (c+2).toString()).innerHTML != text) || (c == 6)){
+                        if(letmoveking((r), (c+1), clr) == true){
+                            iffree((r).toString(), (c+1).toString(), clr);
+                        }
+                    }
+                }
+                if(r >= 1){
+                    if(c >= 1){  
+                        if((c >= 2 && r >= 2 && document.getElementById((r-2).toString() + (c-2).toString()).innerHTML != text) || (c == 1 && r == 1)){
+                            if(letmoveking((r-1), (c-1), clr) == true){
+                                iffree((r-1).toString(), (c-1).toString(), clr);
+
+                            }
+                        }
+                    }
+                    if(c <= 6){
+                        if((c <= 5 && r >= 2 && document.getElementById((r-2).toString() + (c+2).toString()).innerHTML != text) || (c == 6 && r == 1)){
+                            if(letmoveking((r-1), (c+1), clr) == true){
+                            iffree((r-1).toString(), (c+1).toString(), clr);
+                                
+                            }
+                        }
+                    }
+                }
+                if(r <= 6){
+                    if(c >= 1){
+                        if((c >=2  && r <= 5 && document.getElementById((r+2).toString() + (c-2).toString()).innerHTML != text) || (c == 1 && r == 6)){
+                            if(letmoveking((r+1), (c-1), clr) == true){
+                                iffree((r+1).toString(), (c-1).toString(), clr);
+                            }
+                        }  
+                    }
+                    if(c <= 6){
+                        if((c <=5  && r <= 5 && document.getElementById((r+2).toString() + (c+2).toString()).innerHTML != text) || (c == 6 && r == 6)){
+                            if(letmoveking((r+1), (c+1), clr) == true){
+                                iffree((r+1).toString(), (c+1).toString(), clr);
+                            }
+                               
+                        }
+                    }
+                }
+
+
+
+
+
+
+        }
+
+
+
+
+        //determining the directions of queen
+        function queen(x){
+            currentid = x;
+            let r = Number(x[0]);
+            let c = Number(x[1]);
+            let clr = document.getElementById(x).style.color;
+            let right = true, left = true, up = true, down = true, upright = true, upleft = true, downright = true, downleft = true;
+            let posx;
+            let posy;
+            if(clr == "black"){
+                posx = Number(posblackking[0]);
+                posy = Number(posblackking[1]);
+                
+            }else{
+                posx = Number(posgreenking[0]);
+                posy = Number(posgreenking[1]);
+            }
+
+            if(r - posx == c - posy && r > posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            upright = false;
+                            downleft = false;
+                            up = false;
+                            down = false;
+                            left = false;
+                            right = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == posy - c && r > posx && c < posy){
+                
+                let j = posy - 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            upleft = false;
+                            downright = false;
+                            up = false;
+                            down = false;
+                            left = false;
+                            right = false;
+                            
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+                    }
+                }
+            }
+
+            if(r - posx == posy - c && r < posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            upleft = false;
+                            downright = false;
+                            up = false;
+                            down = false;
+                            left = false;
+                            right = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == c - posy && r < posx && c < posy){
+                let j = posy - 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            upright = false;
+                            downleft = false;
+                            up = false;
+                            down = false;
+                            left = false;
+                            right = false;
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+                    }
+                }
+            }
+
+            if(r == posx && c > posy){
+                for(let i = posy+1; i < 8; i++){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                            upleft = false;
+                            upright = false;
+                            downright = false;
+                            downleft = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r > posx){
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                            
+                            upleft = false;
+                            upright = false;
+                            downright = false;
+                            downleft = false;
+                            
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if(r == posx && c < posy){
+                for(let i = posy-1; i >= 0; i--){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                            upleft = false;
+                            upright = false;
+                            downright = false;
+                            downleft = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r < posx){
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-queen" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                            
+                            upleft = false;
+                            upright = false;
+                            downright = false;
+                            downleft = false;
+                        }
+                        break;
+                    }
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+            if(downright == true){
+            if(r != 7 && c != 7){
+                if(document.getElementById((r+1).toString()+(c+1).toString()).innerHTML == "" || (document.getElementById((r+1).toString()+(c+1).toString()).innerHTML != "" && document.getElementById((r+1).toString()+(c+1).toString()).style.color != clr)){
+                    let i = r+1;
+                    let j = c+1;
+                    while(i <= 7 && j <= 7){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j++; 
+                        }else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j++; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }    
+                    }
+                }
+            }
+        }
+        if(upleft == true){
+            if(r!=0 && c != 0){
+                if(document.getElementById((r-1).toString()+(c-1).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c-1).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c-1).toString()).style.color != clr)){
+                    let i = r-1;
+                    let j = c-1;
+                    while(i >= 0 && j >= 0){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j--; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j--; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(downleft == true){
+            if(r != 7 && c!= 0){
+                if(document.getElementById((r+1).toString()+(c-1).toString()).innerHTML == "" || (document.getElementById((r+1).toString()+(c-1).toString()).innerHTML != "" && document.getElementById((r+1).toString()+(c-1).toString()).style.color != clr)){
+                    let i = r+1;
+                    let j = c-1;
+                    while(i <= 7 && j >= 0){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j--; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j--; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(upright == true){
+            if(r!=0 && c!= 7){
+                if(document.getElementById((r-1).toString()+(c+1).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c+1).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c+1).toString()).style.color != clr)){
+                    let i = r-1;
+                    let j = c+1;
+                    while(i >= 0 && j <= 7){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j++; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j++; 
+                            break;
+                        }
+                        
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(right == true){
+            if(c != 7){
+                if(document.getElementById(r.toString()+(c+1).toString()).innerHTML == "" || (document.getElementById(r.toString()+(c+1).toString()).innerHTML != "" && document.getElementById(r.toString()+(c+1).toString()).style.color != clr) ){
+                    for(let i = c+1; i < 8; i++){
+                        if(document.getElementById(r.toString()+i.toString()).innerHTML == ""){
+                            iffree(r.toString(), i.toString(), clr);
+                        }else if((document.getElementById(r.toString()+i.toString()).innerHTML != "" && document.getElementById(r.toString()+ i.toString()).style.color != clr)){
+                            iffree(r.toString(), i.toString(), clr);
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(left == true){
+            
+            if(c != 0){
+                if(document.getElementById(r.toString()+(c-1).toString()).innerHTML == "" || document.getElementById((r).toString()+(c-1).toString()).style.color != clr){
+                    for(let i = c-1; i >= 0; i--){
+                        if(document.getElementById(r.toString()+ i.toString()).innerHTML == "" ){
+                            iffree(r.toString(), i.toString(), clr);
+                        }else if(document.getElementById(r.toString()+ i.toString()).innerHTML != "" && document.getElementById(r.toString()+ i.toString()).style.color != clr){
+                            iffree(r.toString(), i.toString(), clr);
+                            break;
+                        } 
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(down == true){
+            if(r != 7){
+                if(document.getElementById((r+1).toString()+(c).toString()).innerHTML == "" || document.getElementById((r+1).toString()+c.toString()).style.color != clr){
+                    for(let i = r+1; i < 8; i++){
+                        if(document.getElementById(i.toString()+c.toString()).innerHTML == "" ){
+                            iffree(i.toString(), c.toString(),clr);
+                        }else if(document.getElementById(i.toString()+c.toString()).innerHTML != "" && document.getElementById(i.toString()+c.toString()).style.color != clr){
+                            iffree(i.toString(), c.toString(),clr);
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(up == true){
+            if(r != 0){
+                if(document.getElementById((r-1).toString()+(c).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c).toString()).style.color != clr)){
+                    for(let i = r-1; i >= 0; i--){
+                        if(document.getElementById(i.toString()+c.toString()).innerHTML == "" ){
+                            iffree(i.toString(), c.toString(), clr);
+                        }else if((document.getElementById(i.toString()+c.toString()).innerHTML != "" && document.getElementById(i.toString()+c.toString()).style.color != clr)){
+                            iffree(i.toString(), c.toString(), clr);
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        }
+
+        
+
+        //determining the directions of bishop
+        function bishop(x){
+            currentid = x;
+            let r = Number(x[0]);
+            let c = Number(x[1]);
+            let clr = document.getElementById(x).style.color;
+            let right = true, left = true, up = true, down = true;
+            let posx;
+            let posy;
+            if(clr == "black"){
+                posx = Number(posblackking[0]);
+                posy = Number(posblackking[1]);
+                
+            }else{
+                posx = Number(posgreenking[0]);
+                posy = Number(posgreenking[1]);
+            }
+
+            if(r - posx == c - posy && r > posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == posy - c && r > posx && c < posy){
+                
+                let j = posy - 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                            
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+                    }
+                }
+            }
+
+            if(r - posx == posy - c && r < posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == c - posy && r < posx && c < posy){
+                let j = posy - 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-bishop" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+                    }
+                }
+            }
+
+
+
+
+
+
+            if(right == true){
+            if(r != 7 && c != 7){
+                if(document.getElementById((r+1).toString()+(c+1).toString()).innerHTML == "" || (document.getElementById((r+1).toString()+(c+1).toString()).innerHTML != "" && document.getElementById((r+1).toString()+(c+1).toString()).style.color != clr)){
+                    let i = r+1;
+                    let j = c+1;
+                    while(i <= 7 && j <= 7){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j++; 
+                        }else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j++; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }    
+                    }
+                }
+            }
+        }
+        if(left == true){
+            if(r!=0 && c != 0){
+                if(document.getElementById((r-1).toString()+(c-1).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c-1).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c-1).toString()).style.color != clr)){
+                    let i = r-1;
+                    let j = c-1;
+                    while(i >= 0 && j >= 0){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j--; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j--; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(down == true){
+            if(r != 7 && c!= 0){
+                if(document.getElementById((r+1).toString()+(c-1).toString()).innerHTML == "" || (document.getElementById((r+1).toString()+(c-1).toString()).innerHTML != "" && document.getElementById((r+1).toString()+(c-1).toString()).style.color != clr)){
+                    let i = r+1;
+                    let j = c-1;
+                    while(i <= 7 && j >= 0){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j--; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i++;
+                            j--; 
+                            break;
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(up == true){
+            if(r!=0 && c!= 7){
+                if(document.getElementById((r-1).toString()+(c+1).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c+1).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c+1).toString()).style.color != clr)){
+                    let i = r-1;
+                    let j = c+1;
+                    while(i >= 0 && j <= 7){
+                        if(document.getElementById(i.toString()+j.toString()).innerHTML == ""){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j++; 
+                        }
+                        else if(document.getElementById(i.toString()+j.toString()).innerHTML != "" && document.getElementById(i.toString()+j.toString()).style.color != clr){
+                            iffree((i).toString(), (j).toString(), clr);
+                            i--;
+                            j++; 
+                            break;
+                        }
+                        
+                        else{
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+            
+        }
+
+
+
+
+
+
+
+
+        //determining the directions of knight
+        function knight(x){
+            currentid = x;
+            let r = Number(x[0]);
+            let c = Number(x[1]);
+            let clr = document.getElementById(x).style.color;
+            let move = true;
+            let posx;
+            let posy;
+            if(clr == "black"){
+                posx = Number(posblackking[0]);
+                posy = Number(posblackking[1]);
+                
+            }else{
+                posx = Number(posgreenking[0]);
+                posy = Number(posgreenking[1]);
+            }
+
+            if(r - posx == c - posy && r > posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == posy - c && r > posx && c < posy){
+                
+                let j = posy - 1;
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                            
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+                    }
+                }
+            }
+
+            if(r - posx == posy - c && r < posx && c > posy){
+                let j = posy + 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                    j++;
+                    if(j == 8){
+                        break;
+                    }
+                }
+            }
+            if(r - posx == c - posy && r < posx && c < posy){
+                let j = posy - 1;
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + j.toString()).innerHTML != "" && document.getElementById(i.toString() + j.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + j.toString()).style.color != clr && (document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-bishop" aria-hidden="true"></i>' || document.getElementById(i.toString() + j.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                    j--;
+                    if(j == -1){
+                        break;
+
+                    }
+                }
+            }
+
+            if(r == posx && c > posy){
+                for(let i = posy+1; i < 8; i++){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r > posx){
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                            
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if(r == posx && c < posy){
+                for(let i = posy-1; i >= 0; i--){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r < posx){
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-knight" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            move = false;
+                        }
+                        break;
+                    }
+                }
+            }
+
+
+            if(move == true){
+                if(r >= 1){
+                    if(c >= 2){
+                        iffree((r-1).toString(), (c-2).toString(),clr);
+                    }
+                    if(c <= 5){
+                        iffree((r-1).toString(), (c+2).toString(), clr);
+                    }
+                }
+                if (r >= 2){
+                    if(c >= 1){
+                        iffree((r-2).toString(), (c-1).toString(), clr);
+                    }
+                    if(c <= 5){
+                        iffree((r-2).toString(), (c+1).toString(), clr);
+                    }
+                }
+                if(r <= 5){
+                    if(c >= 1){
+                        iffree((r+2).toString(), (c-1).toString(), clr);    
+                    }
+                    if(c <= 6){
+                        iffree((r+2).toString(), (c+1).toString(), clr);
+                    }
+                }
+                if(r <= 6){
+                    if(c >=2){
+                        iffree((r+1).toString(), (c-2).toString(), clr);
+                    }
+                    if(c <= 5){
+                        iffree((r+1).toString(), (c+2).toString(), clr);
+                    }
+                }
+            }
+
+        }
+
+
+        //determining the directions of rook
+        function rock(x){
+            currentid = x;
+            let r = Number(x[0]);
+            let c = Number(x[1]);
+            let clr = document.getElementById(x).style.color;
+            let right = true, left = true, up = true, down = true;
+            let posx;
+            let posy;
+            if(clr == "black"){
+                posx = Number(posblackking[0]);
+                posy = Number(posblackking[1]);
+                
+            }else{
+                posx = Number(posgreenking[0]);
+                posy = Number(posgreenking[1]);
+            }
+
+            if(r == posx && c > posy){
+                for(let i = posy+1; i < 8; i++){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r > posx){
+                for(let i = posx+1; i < 8; i++){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                            
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if(r == posx && c < posy){
+                for(let i = posy-1; i >= 0; i--){
+                    if(document.getElementById(r.toString() + i.toString()).innerHTML != "" && document.getElementById(r.toString() + i.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>'){
+                        if(document.getElementById(r.toString() + i.toString()).style.color != clr && (document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(r.toString() + i.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            up = false;
+                            down = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(c == posy && r < posx){
+                for(let i = posx-1; i >= 0; i--){
+                    if(document.getElementById(i.toString() + c.toString()).innerHTML != "" && document.getElementById(i.toString() + c.toString()).innerHTML != '<i class="fas fa-chess-rook" aria-hidden="true"></i>'){
+                        if(document.getElementById(i.toString() + c.toString()).style.color != clr && (document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-rook" aria-hidden="true"></i>' || document.getElementById(i.toString() + c.toString()).innerHTML == '<i class="fas fa-chess-queen" aria-hidden="true"></i>')){
+                            left = false;
+                            right = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(right == true){
+                if(c != 7){
+                    if(document.getElementById(r.toString()+(c+1).toString()).innerHTML == "" || (document.getElementById(r.toString()+(c+1).toString()).innerHTML != "" && document.getElementById(r.toString()+(c+1).toString()).style.color != clr) ){
+                        for(let i = c+1; i < 8; i++){
+                            if(document.getElementById(r.toString()+i.toString()).innerHTML == ""){
+                                iffree(r.toString(), i.toString(), clr);
+                            }else if((document.getElementById(r.toString()+i.toString()).innerHTML != "" && document.getElementById(r.toString()+ i.toString()).style.color != clr)){
+                                iffree(r.toString(), i.toString(), clr);
+                                break;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(left == true){
+                if(c != 0){
+                    if(document.getElementById(r.toString()+(c-1).toString()).innerHTML == "" || document.getElementById((r).toString()+(c-1).toString()).style.color != clr){
+                        for(let i = c-1; i >= 0; i--){
+                            if(document.getElementById(r.toString()+ i.toString()).innerHTML == "" ){
+                                iffree(r.toString(), i.toString(), clr);
+                            }else if(document.getElementById(r.toString()+ i.toString()).innerHTML != "" && document.getElementById(r.toString()+ i.toString()).style.color != clr){
+                                iffree(r.toString(), i.toString(), clr);
+                                break;
+                            } 
+                            else{
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(down == true){
+                if(r != 7){
+                    if(document.getElementById((r+1).toString()+(c).toString()).innerHTML == "" || document.getElementById((r+1).toString()+(c).toString()).style.color != clr){
+                        for(let i = r+1; i < 8; i++){
+                            if(document.getElementById(i.toString()+c.toString()).innerHTML == "" ){
+                                iffree(i.toString(), c.toString(),clr);
+                            }else if(document.getElementById(i.toString()+c.toString()).innerHTML != "" && document.getElementById(i.toString()+c.toString()).style.color != clr){
+                                iffree(i.toString(), c.toString(),clr);
+                                break;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(up == true){
+                if(r != 0){
+                    if(document.getElementById((r-1).toString()+(c).toString()).innerHTML == "" || (document.getElementById((r-1).toString()+(c).toString()).innerHTML != "" && document.getElementById((r-1).toString()+(c).toString()).style.color != clr)){
+                        for(let i = r-1; i >= 0; i--){
+                            if(document.getElementById(i.toString()+c.toString()).innerHTML == "" ){
+                                iffree(i.toString(), c.toString(), clr);
+                            }else if((document.getElementById(i.toString()+c.toString()).innerHTML != "" && document.getElementById(i.toString()+c.toString()).style.color != clr)){
+                                iffree(i.toString(), c.toString(), clr);
+                                break;
+                            }
+                            else{
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        //making the background colors of the table
+        function createboard(){
+            for(let i = 0; i < 8; i++){
+                document.getElementById("board").innerHTML += "<tr>";
+                    for(let j = 0; j < 8; j++){
+                        if((i % 2 == 0 && j % 2 == 0) || (i % 2 == 1 && j % 2 == 1)){
+                            document.getElementsByTagName("tr")[i].innerHTML += "<td class = 'yellow' id = '" + i.toString() + j.toString() +"'></td>";
+                        }
+                        else if((i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0)){
+                            document.getElementsByTagName("tr")[i].innerHTML += "<td class = 'orange' id = '"+ i.toString() + j.toString() +"'></td>";
+
+                        }
+                        
+                       
+                    }
+                    document.getElementById("board").innerHTML += "</tr>";
+            }
+
+        }
+        
+
+        //placing figures to initial coordinates
+        function placefigures(){
+            const figarr1 = ["<i class='fas fa-chess-rook'></i>", "<i class='fas fa-chess-knight'></i>",
+                            "<i class='fas fa-chess-bishop'></i>","<i class='fas fa-chess-queen'></i>",
+                            "<i class='fas fa-chess-king'></i>","<i class='fas fa-chess-bishop'></i>",
+                            "<i class='fas fa-chess-knight'></i>","<i class='fas fa-chess-rook'></i>"];
+            const figarr2 = ["<i class='fas fa-chess-pawn'></i>"];
+            for(let i = 0; i < 8; i++){
+                document.getElementById("0" + i.toString()).innerHTML = figarr1[i];
+                document.getElementById("0" + i.toString()).style.color = "black";
+                document.getElementById("1"+i.toString()).innerHTML = figarr2[0];
+                document.getElementById("1"+i.toString()).style.color = "black";
+                document.getElementById("7" + i.toString()).innerHTML = figarr1[i];
+                document.getElementById("7" + i.toString()).style.color = "green";
+                document.getElementById("6"+i.toString()).innerHTML = figarr2[0];
+                document.getElementById("6"+i.toString()).style.color = "green";
+            }
+
+            
+        }
+    </script>
+</body>
+</html>
